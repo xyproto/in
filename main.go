@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	//	"io/ioutil"
 	"os"
 	"os/exec"
 )
@@ -10,7 +9,6 @@ import (
 const versionString = "in 1.0"
 
 func main() {
-
 	if len(os.Args) <= 1 {
 		fmt.Println("Too few arguments, need a directory as the first argument")
 		os.Exit(1)
@@ -49,5 +47,4 @@ func main() {
 		fmt.Fprintf(os.Stderr, "%s\n", err)
 		os.Exit(1)
 	}
-
 }
