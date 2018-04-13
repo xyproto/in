@@ -34,3 +34,7 @@ One of many possible ways:
     export GOPATH=~/go
     go get github.com/xyproto/in
     install -Dm755 "$GOPATH/bin/in" /usr/bin/in
+
+## Version
+
+1.0
