@@ -38,6 +38,8 @@ Or, running in a subshell:
 
 Download the latest release and build it with `go build`, then install it with `install -Dm755 in /usr/bin/in`.
 
+Or download the binary release (for 64-bit Linux).
+
 Or, for the development release:
 
     export GOPATH=~/go
