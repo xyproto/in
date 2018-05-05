@@ -16,7 +16,7 @@ Instead of:
 
 ## Example 2
 
-    in build ./configure --prefix=/usr
+    in project ./configure --prefix=/usr
 
 Instead of:
 
