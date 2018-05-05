@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-const versionString = "in 1.1"
+const versionString = "in 1.2"
 
 func main() {
 	if len(os.Args) <= 1 {
@@ -28,7 +28,7 @@ func main() {
 			os.Exit(1)
 		}
 		// Create the missing directory, then try to enter
-		err = os.Mkdir(dir, 0755)
+		err = os.MkdirAll(dir, 0755)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%s\n", err)
 			os.Exit(1)

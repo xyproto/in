@@ -2,13 +2,15 @@
 
 A command for running commands in other directories.
 
+It will also create the directories, if missing.
+
 ## Example 1
 
     in build cmake ..
 
 Instead of:
 
-    mkdir build
+    mkdir -p build
     cd build
     cmake ..
 
@@ -18,21 +20,19 @@ Instead of:
 
 Instead of:
 
-    cd build
+    cd project
     ./configure --prefix=/usr
     cd ..
 
-## Why?
+Or:
 
-`cd build` changes the directory also after the command, you would then have to `cd ..` or `cd $srcdir` afterwards. Or use `pushd` and `popd`. Or use parenthesis, like this, which starts a subshell:
+    pushd project
+    ./configure --prefix=/usr
+    popd
 
-    (cd build; ./configure --prefix=/usr)
+Or, running in a subshell:
 
-Using `in` is nicer:
-
-    in build ./configure --prefix=/usr
-
-Also, `in` can create the directory, if missing.
+    (cd project; ./configure --prefix=/usr)
 
 ## Installation
 
@@ -46,4 +46,4 @@ Or, for the development release:
 
 ## Version
 
-1.1
+1.2
