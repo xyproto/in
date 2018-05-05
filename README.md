@@ -2,9 +2,17 @@
 
 A command for running commands in other directories.
 
-## Example
+## Example 1
 
-Example:
+    in build cmake ..
+
+Instead of:
+
+    mkdir -p build
+    cd build
+    cmake ..
+
+## Example 2
 
     in build ./configure --prefix=/usr
 
@@ -12,12 +20,6 @@ Instead of:
 
     cd build
     ./configure --prefix=/usr
-
-or
-
-    cd build; ./configure --prefix=/usr
-
-If the directory is missing, it will be created (but not the parent directories, if missing).
 
 ## Why?
 
@@ -29,17 +31,13 @@ Using `in` is nicer:
 
     in build ./configure --prefix=/usr
 
-When using CMake, using `in` is handy. Instead of:
-
-    mkdir -p build; cd build; cmake ..
-
-One can:
-
-    in build cmake ..
+Also, `in` can create the top level directory, if missing.
 
 ## Installation
 
-One of many possible ways:
+Download the latest release and build it with `go build`, then install it with `install -Dm755 in /usr/bin/in`.
+
+Or, for the development release:
 
     export GOPATH=~/go
     go get github.com/xyproto/in
