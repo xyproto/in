@@ -17,6 +17,8 @@ or
 
     cd build; ./configure --prefix=/usr
 
+If the directory is missing, it will be created (but not the parent directories, if missing).
+
 ## Why?
 
 `cd build` changes the directory also after the command, you would then have to `cd ..` or `cd $srcdir` afterwards. Or use `pushd` and `popd`. Or use parenthesis, like this, which starts a subshell:
@@ -26,6 +28,14 @@ or
 Using `in` is nicer:
 
     in build ./configure --prefix=/usr
+
+When using CMake, using `in` is handy. Instead of:
+
+    mkdir -p build; cd build; cmake ..
+
+One can:
+
+    in build cmake ..
 
 ## Installation
 
@@ -37,4 +47,4 @@ One of many possible ways:
 
 ## Version
 
-1.0
+1.1

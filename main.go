@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
-const versionString = "in 1.0"
+const versionString = "in 1.1"
 
 func main() {
 	if len(os.Args) <= 1 {
@@ -22,8 +23,21 @@ func main() {
 	dir := os.Args[1]
 	err := os.Chdir(dir)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
-		os.Exit(1)
+		if !strings.Contains(err.Error(), "no such file or directory") {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+		// Create the missing directory, then try to enter
+		err = os.Mkdir(dir, 0755)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
+		err = os.Chdir(dir)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s\n", err)
+			os.Exit(1)
+		}
 	}
 
 	if len(os.Args) <= 2 {
