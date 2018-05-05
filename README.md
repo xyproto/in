@@ -8,7 +8,7 @@ A command for running commands in other directories.
 
 Instead of:
 
-    mkdir -p build
+    mkdir build
     cd build
     cmake ..
 
@@ -20,6 +20,7 @@ Instead of:
 
     cd build
     ./configure --prefix=/usr
+    cd ..
 
 ## Why?
 
@@ -31,7 +32,7 @@ Using `in` is nicer:
 
     in build ./configure --prefix=/usr
 
-Also, `in` can create the top level directory, if missing.
+Also, `in` can create the directory, if missing.
 
 ## Installation
 
