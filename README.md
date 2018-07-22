@@ -26,13 +26,13 @@ Instead of:
 
 Or:
 
+    (cd project; ./configure --prefix=/usr)
+
+Or:
+
     pushd project
     ./configure --prefix=/usr
     popd
-
-Or, running in a subshell:
-
-    (cd project; ./configure --prefix=/usr)
 
 ## Installation
 
