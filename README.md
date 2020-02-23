@@ -53,7 +53,7 @@ Manual installation, using `git`, `go`, `sudo` and `install`:
 
 ## Full source code
 
-Here's the full source code for the utility, **main.go**:
+Here's the full source code for the utility, **main.go**. There is always room for improvement, but it's pretty short:
 
 ```go
 package main
@@ -81,22 +81,21 @@ func main() {
 	dir := os.Args[1]
 	if err := os.Chdir(dir); err != nil {
 		if !strings.Contains(err.Error(), "no such file or directory") {
-			fmt.Fprintf(os.Stderr, "%s\n", err)
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 		// Create the missing directory, then try to enter
 		if err = os.MkdirAll(dir, 0755); err != nil {
-			fmt.Fprintf(os.Stderr, "%s\n", err)
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 		if err = os.Chdir(dir); err != nil {
-			fmt.Fprintf(os.Stderr, "%s\n", err)
+			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 	}
 
 	if len(os.Args) <= 2 {
-		fmt.Println("Too few arguments, need a command after the first argument")
 		fmt.Fprintln(os.Stderr, "Too few arguments, need a command after the first argument")
 		os.Exit(1)
 	}
@@ -106,12 +105,12 @@ func main() {
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Start(); err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 
 	if err := cmd.Wait(); err != nil {
-		fmt.Fprintf(os.Stderr, "%s\n", err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
@@ -119,6 +118,6 @@ func main() {
 
 ## General info
 
-* Version: 1.2
+* Version: 1.2.0
 * License: MIT
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
