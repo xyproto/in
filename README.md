@@ -36,16 +36,23 @@ Or:
 
 ## Installation
 
-Download the latest release and build it with `go build`, then install it with `install -Dm755 in /usr/bin/in`.
+Download the binary release (for 64-bit Linux), or install the development version:
 
-Or download the binary release (for 64-bit Linux).
+    go get -u github.com/xyproto/in
 
-Or, for the development release:
+Manual installation, using `git`, `go`, `sudo` and `install`:
 
-    export GOPATH=~/go
-    go get github.com/xyproto/in
-    install -Dm755 "$GOPATH/bin/in" /usr/bin/in
+    git clone https://github.com/xyproto/in
+    cd in
+    go build
+    sudo install -Dm755 in /usr/bin/in
 
-## Version
+## Dependencies
 
-1.2
+* Go 1.3 or later
+
+## General info
+
+* Version: 1.2
+* License: MIT
+* Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
