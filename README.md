@@ -1,4 +1,4 @@
-# in
+# in [![Build Status](https://travis-ci.com/xyproto/in.svg?branch=master)](https://travis-ci.com/xyproto/in)
 
 A command for running commands in other directories.
 
