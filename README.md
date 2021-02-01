@@ -2,7 +2,7 @@
 
 A command for running commands in other directories.
 
-It will also create the directories, if missing.
+It will also create the directories, if missing. If the top level directory is empty after executing the command, it will be removed. This means that `in testdirectory pwd` leaves no traces.
 
 ## Example 1
 
@@ -61,36 +61,35 @@ Here's the full source code for the utility, **main.go**. There is always room f
 package main
 
 import (
-	"errors"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 )
 
-const versionString = "in 1.3.0"
+const versionString = "in 1.4.0"
 
-// enter a directory, creating the directory first if needed
-func enter(path string) error {
+// Enter a directory, creating the directory first if needed.
+// Return true if a directory was created.
+func enterAndCreate(path string) (bool, error) {
 	err := os.Chdir(path)
 	if err == nil { // success, no need to create the directory first
-		return nil
+		return false, nil
 	}
-	// check if the returned PathError has the message "no such file or directory"
-	if pe, ok := err.(*os.PathError); ok && pe.Err.Error() == "no such file or directory" {
-		return err
+	// for any other error but "no such file or directory", return with an error
+	if pe, ok := err.(*os.PathError); ok && pe.Err.Error() != "no such file or directory" {
+		return false, err
 	}
 	// create the missing directory
 	if err = os.MkdirAll(path, 0755); err != nil {
-		return err
+		return false, err
 	}
 	// enter the directory
-	if err = os.Chdir(path); err != nil {
-		return err
-	}
-	return nil
+	return true, os.Chdir(path)
 }
 
-// run a command
+// Run a command
 func run(args ...string) error {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdout = os.Stdout
@@ -98,45 +97,44 @@ func run(args ...string) error {
 	if err := cmd.Start(); err != nil {
 		return err
 	}
-	if err := cmd.Wait(); err != nil {
-		return err
-	}
-	return nil
-}
-
-// the main program
-func program() error {
-	if len(os.Args) <= 1 {
-		return errors.New("too few arguments, need a directory as the first argument")
-	}
-	if os.Args[1] == "-v" || os.Args[1] == "--version" {
-		fmt.Println(versionString)
-		os.Exit(0)
-	}
-	if len(os.Args) <= 2 {
-		return errors.New("too few arguments, need a command after the first argument")
-	}
-	// enter the given directory
-	if err := enter(os.Args[1]); err != nil {
-		return err
-	}
-	// run the given command
-	if err := run(os.Args[2:]...); err != nil {
-		return err
-	}
-	return nil
+	return cmd.Wait()
 }
 
 func main() {
-	if err := program(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
+	if len(os.Args) <= 1 {
+		log.Fatalln("too few arguments, need a directory as the first argument")
+	}
+	if os.Args[1] == "-v" || os.Args[1] == "--version" {
+		fmt.Println(versionString)
+		return
+	}
+	if len(os.Args) <= 2 {
+		log.Fatalln("too few arguments, need a command after the first argument")
+	}
+	startDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	dirName := os.Args[1]
+	// enter the given directory (and create it, if needed)
+	ok, err := enterAndCreate(dirName)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	// run the given command
+	if err := run(os.Args[2:]...); err != nil {
+		if ok { // remove the created directory, if it's empty
+			os.Remove(filepath.Join(startDir, dirName))
+		}
+		log.Fatalln(err) // exit(1) and skip the deferred function
+	} else if ok { // remove the created directory, if it's empty
+		os.Remove(filepath.Join(startDir, dirName))
 	}
 }
 ```
 
 ## General info
 
-* Version: 1.3.0
+* Version: 1.4.0
 * License: MIT
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
