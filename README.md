@@ -1,6 +1,6 @@
-# in ![Build](https://github.com/xyproto/in/workflows/Build/badge.svg)
+![logo](img/in_160.png)
 
-![logo](img/in.png)
+# in ![Build](https://github.com/xyproto/in/workflows/Build/badge.svg)
 
 A command for running commands in other directories.
 
