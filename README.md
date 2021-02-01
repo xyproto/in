@@ -1,5 +1,7 @@
 # in ![Build](https://github.com/xyproto/in/workflows/Build/badge.svg)
 
+![logo](img/in.png)
+
 A command for running commands in other directories.
 
 It will also create the directories, if missing. If the top level directory is empty after executing the command, it will be removed. This means that `in testdirectory pwd` leaves no traces.
