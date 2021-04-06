@@ -57,7 +57,7 @@ When compiling with GCC 10.2.0 (`gccgo`), the `in` executable is only 41k here.
 
 ## Full source code
 
-Here's the full source code for the utility, **main.go**. There is always room for improvement, but it's relatively short and with no external dependencies:
+Here's the full source code for the utility. There is always room for improvement, but it's relatively short and with no external dependencies:
 
 ```go
 package main
