@@ -6,6 +6,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 )
 
 const versionString = "in 1.4.0"
@@ -29,6 +30,16 @@ func enterAndCreate(path string) (bool, error) {
 	return true, os.Chdir(path)
 }
 
+// Enter a directory using os.Chdir
+func enterDirectory(path string) error {
+	err := os.Chdir(path)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Run a command
 func run(args ...string) error {
 	cmd := exec.Command(args[0], args[1:]...)
@@ -38,6 +49,41 @@ func run(args ...string) error {
 		return err
 	}
 	return cmd.Wait()
+}
+
+// runInAllMatching runs the given command in all the directories matching the given glob pattern
+func runInAllMatching(pattern, startDir string) error {
+	matches, err := filepath.Glob(pattern)
+	if err != nil {
+		return err
+	}
+
+	// our pattern can match the same parent directory multiple times, so account for that
+	parentDirectories := make(map[string]int, 0)
+	for _, fileName := range matches {
+		directory := fileName
+		if stat, err := os.Stat(fileName); err == nil && !stat.IsDir() {
+			directory = filepath.Dir(fileName)
+		}
+		directory = filepath.Join(startDir, directory)
+		if count, ok := parentDirectories[directory]; ok {
+			parentDirectories[directory] = count + 1
+		} else {
+			parentDirectories[directory] = 1
+		}
+	}
+
+	for directory := range parentDirectories {
+		// fmt.Println("Running in ", directory)
+		if err := enterDirectory(directory); err != nil {
+			log.Fatalln(err)
+		}
+		// run the given command
+		if err := run(os.Args[2:]...); err != nil {
+			log.Fatalln(err) // exit(1) and skip the deferred function
+		}
+	}
+	return nil
 }
 
 func main() {
@@ -56,6 +102,16 @@ func main() {
 		log.Fatalln(err)
 	}
 	dirName := os.Args[1]
+
+	if strings.Contains(dirName, "*") {
+		err = runInAllMatching(dirName, startDir)
+		if err != nil {
+			log.Fatalln(err)
+			return
+		}
+		return
+	}
+
 	// enter the given directory (and create it, if needed)
 	ok, err := enterAndCreate(dirName)
 	if err != nil {
