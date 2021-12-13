@@ -30,16 +30,6 @@ func enterAndCreate(path string) (bool, error) {
 	return true, os.Chdir(path)
 }
 
-// Enter a directory using os.Chdir
-func enterDirectory(path string) error {
-	err := os.Chdir(path)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // Run a command
 func run(args ...string) error {
 	cmd := exec.Command(args[0], args[1:]...)
@@ -75,7 +65,7 @@ func runInAllMatching(pattern, startDir string) error {
 
 	for directory := range parentDirectories {
 		// fmt.Println("Running in ", directory)
-		if err := enterDirectory(directory); err != nil {
+		if err := os.Chdir(directory); err != nil {
 			log.Fatalln(err)
 		}
 		// run the given command
@@ -104,10 +94,8 @@ func main() {
 	dirName := os.Args[1]
 
 	if strings.Contains(dirName, "*") {
-		err = runInAllMatching(dirName, startDir)
-		if err != nil {
+		if err = runInAllMatching(dirName, startDir); err != nil {
 			log.Fatalln(err)
-			return
 		}
 		return
 	}
