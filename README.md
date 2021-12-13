@@ -38,9 +38,9 @@ Or:
 
 ## Example 3
 
-Support for globs via `filepath.Glob` which allows you to do something like:
+Support for globs via `filepath.Glob` which allows you to do something like (note the quotes which prevent a shell like bash from handling the globbing itself):
 
-    in ./**/*pom.xml mvn clean
+    in "./**/*pom.xml" mvn clean
 
 
 ## Installation
