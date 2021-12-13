@@ -52,10 +52,17 @@ func runInAllMatching(pattern, startDir string) error {
 	parentDirectories := make(map[string]int, 0)
 	for _, fileName := range matches {
 		directory := fileName
-		if stat, err := os.Stat(fileName); err == nil && !stat.IsDir() {
-			directory = filepath.Dir(fileName)
+		stat, err := os.Stat(fileName)
+		if err != nil {
+			return err
 		}
-		directory = filepath.Join(startDir, directory)
+
+		if stat.IsDir() {
+			directory = filepath.Join(startDir, fileName)
+		} else {
+			directory = filepath.Join(startDir, filepath.Dir(fileName))
+		}
+
 		if count, ok := parentDirectories[directory]; ok {
 			parentDirectories[directory] = count + 1
 		} else {
