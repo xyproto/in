@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const versionString = "in 1.4.0"
+const versionString = "in 1.5.0"
 
 // Enter a directory, creating the directory first if needed.
 // Return true if a directory was created.
