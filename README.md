@@ -45,7 +45,7 @@ Support for globs via `filepath.Glob` which allows you to do something like (not
 
 ## Installation
 
-Either download the binary release (for 64-bit Linux), or install the development version (using `go install` like this requires Go 1.17 or later):
+Either download the binary release (for 64-bit Linux), or install the development version (using `go install` like this requires Go 1.19 or later):
 
     go install github.com/xyproto/in@latest
 
@@ -58,7 +58,7 @@ Manual installation, using `git`, `go`, `sudo` and `install`:
 
 ## Dependencies
 
-* Go 1.17 or later
+* Go 1.19 or later
 
 When compiling with GCC 10.2.0 (`gccgo`), the `in` executable is only 41k here.
 
