@@ -31,8 +31,28 @@ func enterAndCreate(path string) (bool, error) {
 }
 
 // Run a command
-func run(args ...string) error {
-	cmd := exec.Command(args[0], args[1:]...)
+func run(directory string, args ...string) error {
+	var err error
+	commandName := args[0]
+
+	absDir, err := filepath.Abs(directory)
+	if err != nil {
+		return err
+	}
+
+	if strings.HasPrefix(commandName, ".") {
+		commandName, err = filepath.Abs(commandName)
+		if err != nil {
+			return err
+		}
+	}
+
+	cmd := exec.Command(commandName, args[1:]...)
+	cmd.Dir = absDir
+
+	cmd.Env = append(cmd.Environ(), "PWD="+absDir)
+	cmd.Env = append(cmd.Environ(), "INDIR="+absDir)
+
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Start(); err != nil {
@@ -76,7 +96,7 @@ func runInAllMatching(pattern, startDir string) error {
 			log.Fatalln(err)
 		}
 		// run the given command
-		if err := run(os.Args[2:]...); err != nil {
+		if err := run(directory, os.Args[2:]...); err != nil {
 			log.Fatalln(err) // exit(1) and skip the deferred function
 		}
 	}
@@ -113,7 +133,7 @@ func main() {
 		log.Fatalln(err)
 	}
 	// run the given command
-	if err := run(os.Args[2:]...); err != nil {
+	if err := run(dirName, os.Args[2:]...); err != nil {
 		if ok { // remove the created directory, if it's empty
 			os.Remove(filepath.Join(startDir, dirName))
 		}
