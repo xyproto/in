@@ -58,7 +58,7 @@ Manual installation, using `git`, `go`, `sudo` and `install`:
 
 ## Dependencies
 
-* Go 1.3 or later
+* Go 1.17 or later
 
 When compiling with GCC 10.2.0 (`gccgo`), the `in` executable is only 41k here.
 
@@ -145,5 +145,5 @@ func main() {
 ## General info
 
 * Version: 1.4.0
-* License: MIT
+* License: BSD-3
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
