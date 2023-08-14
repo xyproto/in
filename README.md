@@ -44,7 +44,7 @@ Or:
 
 ## Example 3
 
-Support for globs via `filepath.Glob` which allows you to do something like (note the quotes which prevent a shell like bash from handling the globbing itself):
+Globbing (note the double quotes to avoid shell expansion):
 
     in "./**/*pom.xml" mvn clean
 
