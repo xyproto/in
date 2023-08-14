@@ -48,10 +48,6 @@ Globbing (note the double quotes to avoid shell expansion):
 
     in "./**/*pom.xml" mvn clean
 
-Instead of:
-
-    find . -name "*pom.xml" -exec mvn clean \;
-
 ## Installation
 
 Either download the binary release (for 64-bit Linux), or install the development version (using `go install` like this requires Go 1.19 or later):
