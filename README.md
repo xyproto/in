@@ -16,12 +16,11 @@ Instead of:
     mkdir -p build
     cd build
     cmake ..
-    
+
 Or:
 
     mkdir -p build
     cmake -B build -S .
-
 
 ## Example 2
 
@@ -74,6 +73,6 @@ When compiling with GCC 10.2.0 (`gccgo`), the `in` executable is only 41k here.
 
 ## General info
 
-* Version: 1.5.0
+* Version: 1.6.0
 * License: BSD-3
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
