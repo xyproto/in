@@ -55,10 +55,10 @@ compile_and_compress() {
 
   echo "Compressing $name-$version.$platform.$compression"
   mkdir "$name-$version-$platform"
-  cp ../o.1 "$name-$version-$platform/"
-  gzip "$name-$version-$platform/o.1"
-  cp "$name.$platform" "$name-$version-$platform/o"
-  cp ../LICENSE "$name-$version-$platform/"
+  cp $name.1 "$name-$version-$platform/"
+  gzip "$name-$version-$platform/$name.1"
+  cp "$name.$platform" "$name-$version-$platform/$name"
+  cp LICENSE "$name-$version-$platform/"
 
   case "$compression" in
     tar.xz)
@@ -86,6 +86,5 @@ EOF
 
 wait
 
-cd ..
 mkdir -p release
-mv -v v2/$name-$version* release
+mv -v $name-$version* release
