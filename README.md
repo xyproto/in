@@ -12,9 +12,16 @@ It will also create the directories, if missing. If the top level directory is e
 
 Instead of:
 
+
     mkdir -p build
     cd build
     cmake ..
+    
+Or:
+
+    mkdir -p build
+    cmake -B build -S .
+
 
 ## Example 2
 
@@ -42,6 +49,9 @@ Support for globs via `filepath.Glob` which allows you to do something like (not
 
     in "./**/*pom.xml" mvn clean
 
+Instead of:
+
+    find . -name "*pom.xml" -exec mvn clean \;
 
 ## Installation
 
