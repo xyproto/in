@@ -2,7 +2,7 @@
 
 # in ![Build](https://github.com/xyproto/in/workflows/Build/badge.svg)
 
-A utility for running a command within another directory or directories matching a glob pattern.
+A utility for running a command within another directory (or directories matching a glob pattern).
 
 It will also create the directories, if missing. If the top level directory is empty after executing the command, it will be removed. This means that `in testdirectory pwd` leaves no traces. When running in multiple directories, it will not create any new directories.
 
