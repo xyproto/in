@@ -26,10 +26,11 @@ platforms="
   openbsd,arm,6,netbsd_armv6_static,tar.gz
   openbsd,arm,7,netbsd_armv7_static,tar.gz
   openbsd,386,,netbsd_i386_static,tar.gz
+  plan9,amd64,,netbsd_x86_64_static,tar.gz
+  plan9,arm,6,netbsd_armv6_static,tar.gz
+  plan9,arm,7,netbsd_armv7_static,tar.gz
+  plan9,386,,netbsd_i386_static,tar.gz
 "
-
-# plan9,amd64,,plan9_x86_64_static,tar.gz
-
 name=in
 version=$(grep -i versionString main.go | head -1 | cut -d' ' -f5 | cut -d'"' -f1)
 echo "Version $version"
@@ -79,7 +80,8 @@ while read -r p; do
   IFS=',' read -r goos goarch goarm platform compression <<EOF
 $p
 EOF
-  compile_and_compress "$goos" "$goarch" "$goarm" "$platform" "$compression" &
+  compile_and_compress "$goos" "$goarch" "$goarm" "$platform" "$compression"
+  #&
 done <<EOF
 $platforms
 EOF
