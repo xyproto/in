@@ -6,6 +6,8 @@ A utility for running a command within another directory (or directories matchin
 
 It will also create the directories, if missing. If the top level directory is empty after executing the command, it will be removed. This means that `in testdirectory pwd` leaves no traces. When running in multiple directories, it will not create any new directories.
 
+NOTE: This project is a work in progress! Please don't use it in production just yet.
+
 ## Example 1
 
     in build cmake ..
