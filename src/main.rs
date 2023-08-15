@@ -58,9 +58,13 @@ fn run_command_in_dir(
     command_parts: &[&str],
 ) -> Result<(), Box<dyn std::error::Error>> {
     info!("Running command in directory: {:?}", dir);
+
+    let dir_str = dir.to_str().unwrap_or_default();
     let status = Command::new(command_parts[0])
         .args(&command_parts[1..])
         .current_dir(dir)
+        .env("PWD", dir_str)
+        .env("INDIR", dir_str)
         .status()?;
 
     if !status.success() {
@@ -77,7 +81,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
 
     let matches = App::new("in")
-        .version("1.7.0")
+        .version("1.7.1")
         .author("Alexander F. Rødseth <xyproto@archlinux.org>")
         .about("Utility to execute commands in directories, and create directories if needed.")
         .arg(

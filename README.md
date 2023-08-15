@@ -60,6 +60,6 @@ Manual installation, using `git`, `rust`, `sudo` and `install`:
 
 ## General info
 
-* Version: 1.7.0
+* Version: 1.7.1
 * License: BSD-3
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
