@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -30,11 +31,16 @@ func createAndEnter(path string) (int, error) {
 
 // removeIfEmpty will remove the directory structure if all directories are empty
 func removeIfEmpty(path string, depth int) error {
-	if depth <= 0 {
+	if depth <= 1 {
 		return nil
 	}
-	err := os.Remove(path)
-	if err != nil {
+
+	// Check if the path is a directory before attempting to remove it
+	if info, err := os.Stat(path); err == nil && !info.IsDir() {
+		return fmt.Errorf("path is not a directory: %s", path)
+	}
+
+	if err := os.Remove(path); err != nil {
 		if os.IsNotExist(err) {
 			return nil // it's already gone, which is fine
 		}
