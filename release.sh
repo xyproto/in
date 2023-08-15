@@ -1,65 +1,67 @@
 #!/bin/sh
 #
-# Create release tarballs/zip-files
+# Create release tarballs/zip-files for Rust using cargo
 #
 
-platforms="
-  linux,amd64,,linux_x86_64_static,tar.xz
-  linux,arm64,,linux_aarch64_static,tar.xz
-  linux,arm,6,linux_armv6_static,tar.xz
-  linux,arm,7,linux_armv7_static,tar.xz
-  linux,riscv64,,linux_riscv64_static,tar.xz
-  darwin,amd64,,macos_x86_64_static,tar.gz
-  darwin,arm64,,macos_aarch64_static,tar.gz
-  freebsd,amd64,,freebsd_x86_64_static,tar.gz
-  freebsd,arm64,,freebsd_aarch64_static,tar.gz
-  freebsd,arm,6,freebsd_armv6_static,tar.gz
-  freebsd,arm,7,freebsd_armv7_static,tar.gz
-  freebsd,386,,freebsd_i386_static,tar.gz
-  netbsd,amd64,,netbsd_x86_64_static,tar.gz
-  netbsd,arm64,,netbsd_aarch64_static,tar.gz
-  netbsd,arm,6,netbsd_armv6_static,tar.gz
-  netbsd,arm,7,netbsd_armv7_static,tar.gz
-  netbsd,386,,netbsd_i386_static,tar.gz
-  openbsd,amd64,,netbsd_x86_64_static,tar.gz
-  openbsd,arm64,,netbsd_aarch64_static,tar.gz
-  openbsd,arm,6,netbsd_armv6_static,tar.gz
-  openbsd,arm,7,netbsd_armv7_static,tar.gz
-  openbsd,386,,netbsd_i386_static,tar.gz
-  plan9,amd64,,netbsd_x86_64_static,tar.gz
-  plan9,arm,6,netbsd_armv6_static,tar.gz
-  plan9,arm,7,netbsd_armv7_static,tar.gz
-  plan9,386,,netbsd_i386_static,tar.gz
+rustup_targets="
+aarch64-unknown-linux-gnu
+i686-unknown-linux-gnu
+x86_64-apple-darwin
+x86_64-unknown-linux-gnu
+aarch64-apple-darwin
+aarch64-unknown-linux-musl
+arm-unknown-linux-gnueabi
+arm-unknown-linux-gnueabihf
+armv7-unknown-linux-gnueabihf
+riscv64gc-unknown-linux-gnu
+x86_64-unknown-freebsd
+x86_64-unknown-linux-musl
+x86_64-unknown-netbsd
 "
-name=in
-version=$(grep -i versionString main.go | head -1 | cut -d' ' -f5 | cut -d'"' -f1)
-echo "Version $version"
 
-export CGO_ENABLED=0
+for target in $rustup_targets; do
+  rustup target add "$target"
+done
+
+platforms="
+aarch64-unknown-linux-gnu,linux_aarch64,tar.xz
+i686-unknown-linux-gnu,linux_i686,tar.xz
+x86_64-apple-darwin,macos_x86_64,tar.gz
+x86_64-unknown-linux-gnu,linux_x86_64,tar.xz
+aarch64-apple-darwin,macos_aarch64,tar.gz
+aarch64-unknown-linux-musl,linux_aarch64_musl,tar.xz
+arm-unknown-linux-gnueabi,linux_armv6,tar.xz
+arm-unknown-linux-gnueabihf,linux_armv6hf,tar.xz
+armv7-unknown-linux-gnueabihf,linux_armv7,tar.xz
+riscv64gc-unknown-linux-gnu,linux_riscv64,tar.xz
+x86_64-unknown-freebsd,freebsd_x86_64,tar.xz
+x86_64-unknown-linux-musl,linux_x86_64_musl,tar.xz
+x86_64-unknown-netbsd,netbsd_x86_64,tar.xz
+"
+
+name='in'
+version='1.7.1'  # This is now set as a variable to be reused
 
 compile_and_compress() {
-  goos="$1"
-  goarch="$2"
-  goarm="$3"
-  platform="$4"
-  compression="$5"
+  target="$1"
+  platform="$2"
+  compression="$3"
 
   echo "Compiling $name.$platform..."
 
-  [ -n "$goarm" ] && GOARM="$goarm" || unset GOARM
-  GOOS="$goos" GOARCH="$goarch" go build -mod=vendor -trimpath -ldflags="-s -w" -a -o "$name.$platform" || {
+  cargo build --release --target="$target" || {
     echo "Error: failed to compile for $platform"
     echo "Platform string: $p"
-    echo "Environment variables: GOOS=$goos GOARCH=$goarch GOARM=$goarm"
+    echo "Target: $target"
     exit 1
   }
 
   echo "Compressing $name-$version.$platform.$compression"
   mkdir "$name-$version-$platform"
-  cp $name.1 "$name-$version-$platform/"
+  cp ../$name.1 "$name-$version-$platform/"
   gzip "$name-$version-$platform/$name.1"
-  cp "$name.$platform" "$name-$version-$platform/$name"
-  cp LICENSE "$name-$version-$platform/"
+  cp "target/$target/release/$name" "$name-$version-$platform/"
+  cp ../LICENSE "$name-$version-$platform/"
 
   case "$compression" in
     tar.xz)
@@ -71,18 +73,17 @@ compile_and_compress() {
   esac
 
   rm -r "$name-$version-$platform"
-  rm "$name.$platform"
 }
 
 echo 'Compiling...'
 while read -r p; do
   [ -z "$p" ] && continue
-  IFS=',' read -r goos goarch goarm platform compression <<EOF
+  IFS=',' read -r target platform compression << EOF
 $p
 EOF
-  compile_and_compress "$goos" "$goarch" "$goarm" "$platform" "$compression"
+  compile_and_compress "$target" "$platform" "$compression
   #&
-done <<EOF
+done << EOF
 $platforms
 EOF
 
