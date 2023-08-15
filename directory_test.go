@@ -6,6 +6,8 @@ import (
 	"testing"
 )
 
+const verbose = true
+
 func TestCreateAndEnter(t *testing.T) {
 	t.Run("enter existing directory", func(t *testing.T) {
 		tmpDir, err := os.MkdirTemp("", "test")
@@ -14,7 +16,7 @@ func TestCreateAndEnter(t *testing.T) {
 		}
 		defer os.RemoveAll(tmpDir)
 
-		created, err := createAndEnter(tmpDir)
+		created, err := createAndEnter(tmpDir, verbose)
 		if err != nil {
 			t.Fatalf("Expected no error, got %v", err)
 		}
@@ -32,7 +34,7 @@ func TestCreateAndEnter(t *testing.T) {
 
 		newDir := filepath.Join(tmpDir, "new-dir")
 
-		created, err := createAndEnter(newDir)
+		created, err := createAndEnter(newDir, verbose)
 		if err != nil {
 			t.Fatalf("Expected no error, got %v", err)
 		}
@@ -44,7 +46,7 @@ func TestCreateAndEnter(t *testing.T) {
 	t.Run("error for invalid directory", func(t *testing.T) {
 		invalidDir := "" // assuming empty string is an invalid directory
 
-		created, err := createAndEnter(invalidDir)
+		created, err := createAndEnter(invalidDir, verbose)
 		if err == nil {
 			t.Fatalf("Expected an error for invalid directory")
 		}
@@ -62,7 +64,7 @@ func TestCreateAndEnter(t *testing.T) {
 
 		multiDirPath := filepath.Join(tmpDir, "a/b/c")
 
-		created, err := createAndEnter(multiDirPath)
+		created, err := createAndEnter(multiDirPath, verbose)
 		if err != nil {
 			t.Fatalf("Expected no error, got %v", err)
 		}
@@ -78,7 +80,7 @@ func TestCreateAndEnter(t *testing.T) {
 			t.Errorf("Expected current directory to be %s, got %s", multiDirPath, cwd)
 		}
 
-		err = removeIfEmpty(multiDirPath, created) // start removal from 'b', as 'c' is our current directory
+		err = removeIfEmpty(multiDirPath, created, verbose) // start removal from 'b', as 'c' is our current directory
 		if err != nil {
 			t.Fatalf("Expected no error while removing, got %v", err)
 		}

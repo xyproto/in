@@ -1,17 +1,37 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 )
 
-// Run a command within a directory
-func run(directory string, args ...string) error {
-	commandName := args[0]
+// run a command within the given directory
+func run(directory string, commandArgs []string, verbose bool) error {
+	if verbose {
+		fmt.Printf("run(%s, %v, %v)\n", directory, commandArgs, verbose)
+	}
 
-	cmd := exec.Command(commandName, args[1:]...)
-	cmd.Dir = directory
+	commandName := commandArgs[0]
+
+	cmd := exec.Command(commandName, commandArgs[1:]...)
+
+	// Convert the given directory to an absolute path
+	absDirectory, err := filepath.Abs(directory)
+	if err != nil {
+		return err
+	}
+
+	if verbose {
+		fmt.Printf("absdir: %s\ncommandName: %s\n", absDirectory, commandName)
+	}
+
+	cmd.Dir = absDirectory
+
+	// Append the PWD and INDIR environment variables
+	cmd.Env = append(os.Environ(), "PWD="+absDirectory)
+	cmd.Env = append(cmd.Env, "INDIR="+absDirectory)
 
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -23,7 +43,11 @@ func run(directory string, args ...string) error {
 }
 
 // runInAllMatching runs the given command in all the directories matching the given glob pattern
-func runInAllMatching(pattern string) error {
+func runInAllMatching(pattern string, commandArgs []string, verbose bool) error {
+	if verbose {
+		fmt.Printf("runInAllMatching(%s, %v, %v)\n", pattern, commandArgs, verbose)
+	}
+
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
 		return err
@@ -37,7 +61,7 @@ func runInAllMatching(pattern string) error {
 		}
 		seenDirs[dir] = true
 
-		if err := run(dir, os.Args[2:]...); err != nil {
+		if err := run(dir, commandArgs, verbose); err != nil {
 			return err
 		}
 	}
