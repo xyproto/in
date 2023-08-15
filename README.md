@@ -1,6 +1,6 @@
 ![logo](img/in_160.png)
 
-# in ![Build](https://github.com/xyproto/in/workflows/Build/badge.svg)
+# in ![Build](https://github.com/xyproto/in/workflows/CI/badge.svg)
 
 Utility to execute commands in directories, and create directories if needed.
 
