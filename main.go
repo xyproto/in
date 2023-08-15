@@ -11,27 +11,6 @@ import (
 
 const versionString = "in 1.6.0"
 
-// Enter a directory, creating the directory first if needed.
-// Return true if a directory was created.
-func enterAndCreate(path string) (bool, error) {
-	err := os.Chdir(path)
-	if err == nil { // success, no need to create the directory first
-		return false, nil
-	}
-
-	if !os.IsNotExist(err) {
-		return false, err
-	}
-
-	// create the missing directory
-	if err = os.MkdirAll(path, 0755); err != nil {
-		return false, err
-	}
-
-	// enter the directory
-	return true, os.Chdir(path)
-}
-
 // Run a command within a directory
 func run(directory string, args ...string) error {
 	commandName := args[0]
@@ -95,7 +74,7 @@ func main() {
 	}
 
 	// enter the given directory (and create it, if needed)
-	dirCreated, err := enterAndCreate(dirOrPattern)
+	dirCreated, err := createAndEnter(dirOrPattern)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -106,11 +85,9 @@ func main() {
 	}
 
 	// remove the created directory if it's empty, and if it was created by this program
-	if dirCreated {
-		files, err := os.ReadDir(dirOrPattern)
-		if err != nil || len(files) == 0 {
-			os.Remove(dirOrPattern)
+	if dirCreated > 0 {
+		if err := removeIfEmpty(dirOrPattern, dirCreated); err != nil {
+			log.Println("Failed to remove the directory:", err)
 		}
 	}
 }
-
