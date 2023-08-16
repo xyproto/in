@@ -40,7 +40,7 @@ x86_64-unknown-netbsd,netbsd_x86_64,tar.xz
 "
 
 name='in'
-version='1.7.1'  # This is now set as a variable to be reused
+version='1.7.2'  # This is now set as a variable to be reused
 
 compile_and_compress() {
   target="$1"

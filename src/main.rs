@@ -69,7 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
 
     let matches = App::new("in")
-        .version("1.7.1")
+        .version("1.7.2")
         .author("Alexander F. Rødseth <xyproto@archlinux.org>")
         .about("Utility to execute commands in directories, and create directories if needed.")
         .arg(
