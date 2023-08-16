@@ -1,6 +1,6 @@
-# in ![Build](https://github.com/xyproto/in/workflows/CI/badge.svg)
+![In Logo](img/in_160.png)
 
-![logo](img/in_160.png)
+![Build](https://github.com/xyproto/in/workflows/Build/badge.svg) [![License](https://img.shields.io/badge/license-BSD-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/in/main/LICENSE) [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
 
 Utility to execute commands in directories, and create directories if needed.
 
@@ -50,13 +50,24 @@ Globbing (note the double quotes to avoid shell expansion). No directories are c
 
 ## Installation
 
-Manual installation, using `git`, `rust`, `sudo` and `install`:
+### Linux
+
+Manual installation, using `cargo`, `git`, `install` and `sudo`:
+
+    git clone https://github.com/xyproto/in
+    cd in
+    cargo build --release
+    sudo install -Dm755 target/release/in /usr/bin/in
+
+### FreeBSD
+
+Manual installation, using `cargo`, `doas`, `git` and `install`:
 
     git clone https://github.com/xyproto/in
     cd in
     cargo build --release
     mkdir -p /usr/bin
-    sudo install -m755 target/release/in /usr/bin/in
+    doas install -m755 target/release/in /usr/bin/in
 
 ## General info
 
