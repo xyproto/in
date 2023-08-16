@@ -9,48 +9,36 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-fn run_command_and_cleanup(
-    dir: &Path,
-    command_parts: &[&str],
-    created_dirs: &[PathBuf],
-) -> Result<(), Box<dyn std::error::Error>> {
-    run_command_in_dir(dir, command_parts)?;
-    cleanup_empty_directories_if_created(dir, created_dirs)?;
-    Ok(())
+fn ensure_directory_exists(path: &Path) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
+    let mut created_dirs = Vec::new();
+    let mut current_path = PathBuf::new();
+
+    for component in path.components() {
+        current_path.push(component);
+        if !current_path.exists() {
+            fs::create_dir(&current_path)?;
+            created_dirs.push(current_path.clone());
+        }
+    }
+
+    Ok(created_dirs)
 }
 
 fn cleanup_empty_directories_if_created(
-    dir: &Path,
     created_dirs: &[PathBuf],
 ) -> Result<(), Box<dyn std::error::Error>> {
-    if created_dirs.contains(&dir.to_path_buf()) && is_directory_empty(dir)? {
-        fs::remove_dir(dir)?;
-        info!("Removed empty directory: {:?}", dir);
+    // Iterating in reverse ensures we check and remove child directories first
+    for dir in created_dirs.iter().rev() {
+        if is_directory_empty(dir)? {
+            fs::remove_dir(dir)?;
+            info!("Removed empty directory: {:?}", dir);
+        }
     }
     Ok(())
 }
 
 fn is_directory_empty(dir: &Path) -> Result<bool, Box<dyn std::error::Error>> {
     Ok(dir.read_dir()?.next().is_none())
-}
-
-fn ensure_directory_exists(path: &Path) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
-    let mut created_dirs = Vec::new();
-    let mut current_path = path.to_path_buf();
-
-    if !current_path.exists() {
-        created_dirs.push(current_path.clone());
-        fs::create_dir_all(&current_path)?;
-    }
-
-    while let Some(parent) = current_path.parent() {
-        if !parent.exists() {
-            created_dirs.push(parent.to_path_buf());
-        }
-        current_path.pop();
-    }
-
-    Ok(created_dirs)
 }
 
 fn run_command_in_dir(
@@ -117,7 +105,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Standard mode
         let path = PathBuf::from(path);
         let created_dirs = ensure_directory_exists(&path)?;
-        run_command_and_cleanup(&path, &command_parts, &created_dirs)?;
+        run_command_in_dir(&path, &command_parts)?;
+        cleanup_empty_directories_if_created(&created_dirs)?;
     }
+
     Ok(())
 }
