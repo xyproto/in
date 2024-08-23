@@ -1,6 +1,6 @@
 ![In Logo](img/logo.png)
 
-[![Build](https://github.com/xyproto/in/actions/workflows/build.yml/badge.svg)](https://github.com/xyproto/in/actions/workflows/build.yml) [![License](https://img.shields.io/badge/license-BSD-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/in/main/LICENSE) [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
+[![Build](https://github.com/xyproto/in/actions/workflows/build.yml/badge.svg)](https://github.com/xyproto/in/actions/workflows/build.yml) [![License](https://img.shields.io/badge/license-BSD-green.svg?style=flat)](https://raw.githubusercontent.com/xyproto/in/main/LICENSE)
 
 Utility to execute commands in directories, and create directories if needed.
 
@@ -16,6 +16,7 @@ Instead of:
     mkdir -p build
     cd build
     cmake ..
+    cd ..
 
 Or:
 
