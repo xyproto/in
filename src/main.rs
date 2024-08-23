@@ -1,5 +1,4 @@
 use clap::{App, Arg};
-use env_logger;
 use glob::glob;
 use log::{error, info};
 use std::fs;
@@ -61,8 +60,6 @@ fn run_command_in_dir(
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    env_logger::init();
-
     let matches = App::new("in")
         .version("1.7.3")
         .author("Alexander F. Rødseth <xyproto@archlinux.org>")
