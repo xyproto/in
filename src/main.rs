@@ -1,8 +1,5 @@
-extern crate clap;
-extern crate env_logger;
-extern crate log;
-
 use clap::{App, Arg};
+use env_logger;
 use glob::glob;
 use log::{error, info};
 use std::fs;
@@ -27,7 +24,6 @@ fn ensure_directory_exists(path: &Path) -> Result<Vec<PathBuf>, Box<dyn std::err
 fn cleanup_empty_directories_if_created(
     created_dirs: &[PathBuf],
 ) -> Result<(), Box<dyn std::error::Error>> {
-    // Iterating in reverse ensures we check and remove child directories first
     for dir in created_dirs.iter().rev() {
         if is_directory_empty(dir)? {
             fs::remove_dir(dir)?;
@@ -57,10 +53,9 @@ fn run_command_in_dir(
 
     if !status.success() {
         error!("Command exited with error.");
-        return Err(Box::new(std::io::Error::new(
-            std::io::ErrorKind::Other,
-            "Command execution failed",
-        )));
+        return Err(
+            std::io::Error::new(std::io::ErrorKind::Other, "Command execution failed").into(),
+        );
     }
     Ok(())
 }
