@@ -72,6 +72,6 @@ Manual installation, using `cargo`, `doas`, `git` and `install`:
 
 ## General info
 
-* Version: 1.7.3
+* Version: 1.7.4
 * License: BSD-3
 * Author: Alexander F. Rødseth &lt;xyproto@archlinux.org&gt;
