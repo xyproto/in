@@ -8,16 +8,18 @@ on:
 
 jobs:
 
-  test_in:
+  test_with_stable:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Update local toolchain
+      - name: Set up stable Rust
+        run: rustup update stable
+
+      - name: Install components
         run: |
-          rustup update
           rustup component add clippy
-          rustup install nightly
+          rustup component add rustfmt
 
       - name: Toolchain info
         run: |
@@ -25,16 +27,50 @@ jobs:
           rustc --version
           cargo clippy --version
 
-      - name: Lint
+      - name: Update dependencies
+        run: cargo update
+
+      - name: Lint (Stable)
         run: |
           cargo fmt -- --check
           cargo clippy -- -D warnings
 
-      - name: Test
+      - name: Test (Stable)
         run: |
           cargo check
           cargo test --all
 
-      - name: Build
+      - name: Build (Stable)
+        run: cargo build --release
+
+  test_with_nightly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up nightly Rust
+        run: rustup update nightly
+
+      - name: Install components for nightly
         run: |
-          cargo build --release
+          rustup component add clippy --toolchain nightly
+          rustup component add rustfmt --toolchain nightly
+
+      - name: Toolchain info (Nightly)
+        run: |
+          cargo +nightly --version --verbose
+          rustc +nightly --version
+          cargo +nightly clippy --version
+
+      - name: Lint (Nightly)
+        run: |
+          cargo +nightly fmt -- --check
+          cargo +nightly clippy -- -D warnings
+
+      - name: Test (Nightly)
+        run: |
+          cargo +nightly check
+          cargo +nightly test --all
+
+      - name: Build (Nightly)
+        run: cargo +nightly build --release
