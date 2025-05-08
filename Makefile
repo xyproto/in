@@ -11,6 +11,9 @@ BIN_DIR = $(DESTDIR)$(PREFIX)/bin
 all:
 	cargo build --release
 
+fmt:
+	rustfmt src/*
+
 install: all
 	mkdir -p $(BIN_DIR) $(MAN_DIR)
 	install target/release/$(BIN_NAME) $(BIN_DIR)/$(BIN_NAME)
