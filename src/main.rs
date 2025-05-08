@@ -2,8 +2,11 @@ use clap::{App, Arg};
 use glob::glob;
 use log::{error, info};
 use std::fs;
-use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::{
+    error::Error,
+    path::{Path, PathBuf},
+};
 
 fn ensure_directory_exists(path: &Path) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
     let mut created_dirs = Vec::new();
@@ -59,7 +62,7 @@ fn run_command_in_dir(
     Ok(())
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let matches = App::new("in")
         .version("1.7.4")
         .author("Alexander F. Rødseth <xyproto@archlinux.org>")
@@ -77,29 +80,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .get_matches();
 
-    let path = matches.value_of("DIRECTORY_OR_PATTERN").unwrap();
+    let pattern = matches.value_of("DIRECTORY_OR_PATTERN").unwrap();
     let command_parts: Vec<&str> = matches.values_of("COMMAND").unwrap().collect();
 
-    if path.contains("**") {
-        // Glob/wildcard mode
-        for entry in glob(path)? {
+    // glob mode
+    if pattern.contains("**") {
+        for entry in glob(pattern)? {
             match entry {
-                Ok(path_buf) => {
-                    if path_buf.is_file() {
-                        let dir = path_buf.parent().unwrap_or(Path::new("."));
-                        run_command_in_dir(dir, &command_parts)?;
-                    }
+                Ok(path_buf) if path_buf.is_file() => {
+                    let dir = path_buf.parent().unwrap_or_else(|| Path::new("."));
+                    run_command_in_dir(dir, &command_parts)?;
                 }
+                Ok(_) => { /* skip non-files */ }
                 Err(e) => error!("Error with glob entry: {}", e),
             }
         }
-    } else {
-        // Standard mode
-        let path = PathBuf::from(path);
-        let created_dirs = ensure_directory_exists(&path)?;
-        run_command_in_dir(&path, &command_parts)?;
-        cleanup_empty_directories_if_created(&created_dirs)?;
+        return Ok(());
     }
+
+    let path = PathBuf::from(pattern);
+    let created_dirs = ensure_directory_exists(&path)?;
+    run_command_in_dir(&path, &command_parts)?;
+    cleanup_empty_directories_if_created(&created_dirs)?;
 
     Ok(())
 }
