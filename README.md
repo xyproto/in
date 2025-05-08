@@ -67,8 +67,7 @@ Manual installation, using `cargo`, `doas`, `git` and `install`:
     git clone https://github.com/xyproto/in
     cd in
     cargo build --release
-    mkdir -p /usr/bin
-    doas install -m755 target/release/in /usr/bin/in
+    doas install -m755 target/release/in /usr/local/bin/in
 
 ## General info
 
