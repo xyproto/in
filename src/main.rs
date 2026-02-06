@@ -10,7 +10,11 @@ use std::{
 
 /// Utility to execute commands in directories, and create directories if needed.
 #[derive(Parser)]
-#[command(name = "in", version, author = "Alexander F. Rødseth <xyproto@archlinux.org>")]
+#[command(
+    name = "in",
+    version,
+    author = "Alexander F. Rødseth <xyproto@archlinux.org>"
+)]
 struct Args {
     /// Target directory or pattern
     directory_or_pattern: String,
@@ -67,9 +71,7 @@ fn run_command_in_dir(
 
     if !status.success() {
         error!("Command exited with error.");
-        return Err(
-            std::io::Error::other("Command execution failed").into(),
-        );
+        return Err(std::io::Error::other("Command execution failed").into());
     }
     Ok(())
 }
