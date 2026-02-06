@@ -11,7 +11,7 @@ jobs:
   test_with_stable:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up stable Rust
         run: rustup update stable
@@ -46,7 +46,7 @@ jobs:
   test_with_nightly:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up nightly Rust
         run: rustup update nightly
