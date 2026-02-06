@@ -1,4 +1,4 @@
-use clap::{App, Arg};
+use clap::Parser;
 use glob::glob;
 use log::{error, info};
 use std::fs;
@@ -7,6 +7,18 @@ use std::{
     error::Error,
     path::{Path, PathBuf},
 };
+
+/// Utility to execute commands in directories, and create directories if needed.
+#[derive(Parser)]
+#[command(name = "in", version, author = "Alexander F. Rødseth <xyproto@archlinux.org>")]
+struct Args {
+    /// Target directory or pattern
+    directory_or_pattern: String,
+
+    /// Command to run
+    #[arg(required = true, num_args = 1..)]
+    command: Vec<String>,
+}
 
 fn ensure_directory_exists(path: &Path) -> Result<Vec<PathBuf>, Box<dyn std::error::Error>> {
     let mut created_dirs = Vec::new();
@@ -56,32 +68,17 @@ fn run_command_in_dir(
     if !status.success() {
         error!("Command exited with error.");
         return Err(
-            std::io::Error::new(std::io::ErrorKind::Other, "Command execution failed").into(),
+            std::io::Error::other("Command execution failed").into(),
         );
     }
     Ok(())
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let matches = App::new("in")
-        .version("1.7.4")
-        .author("Alexander F. Rødseth <xyproto@archlinux.org>")
-        .about("Utility to execute commands in directories, and create directories if needed.")
-        .arg(
-            Arg::with_name("DIRECTORY_OR_PATTERN")
-                .help("Target directory or pattern")
-                .required(true),
-        )
-        .arg(
-            Arg::with_name("COMMAND")
-                .help("Command to run")
-                .required(true)
-                .multiple(true),
-        )
-        .get_matches();
+    let args = Args::parse();
 
-    let pattern = matches.value_of("DIRECTORY_OR_PATTERN").unwrap();
-    let command_parts: Vec<&str> = matches.values_of("COMMAND").unwrap().collect();
+    let pattern = &args.directory_or_pattern;
+    let command_parts: Vec<&str> = args.command.iter().map(String::as_str).collect();
 
     // glob mode
     if pattern.contains("**") {
