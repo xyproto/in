@@ -50,18 +50,16 @@ compile_and_compress() {
   echo "Compiling $name.$platform..."
 
   cargo build --release --target="$target" || {
-    echo "Error: failed to compile for $platform"
-    echo "Platform string: $p"
-    echo "Target: $target"
-    exit 1
+    echo "Warning: failed to compile for $platform ($target), skipping"
+    return 1
   }
 
   echo "Compressing $name-$version.$platform.$compression"
   mkdir "$name-$version-$platform"
-  cp ../$name.1 "$name-$version-$platform/"
+  cp $name.1 "$name-$version-$platform/"
   gzip "$name-$version-$platform/$name.1"
   cp "target/$target/release/$name" "$name-$version-$platform/"
-  cp ../LICENSE "$name-$version-$platform/"
+  cp LICENSE "$name-$version-$platform/"
 
   case "$compression" in
     tar.xz)
