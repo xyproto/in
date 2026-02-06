@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # Create release tarballs/zip-files for Rust using cargo
 #
@@ -40,7 +40,7 @@ x86_64-unknown-netbsd,netbsd_x86_64,tar.xz
 "
 
 name='in'
-version='1.7.2'  # This is now set as a variable to be reused
+version='1.7.5'  # This is now set as a variable to be reused
 
 compile_and_compress() {
   target="$1"
@@ -81,7 +81,7 @@ while read -r p; do
   IFS=',' read -r target platform compression << EOF
 $p
 EOF
-  compile_and_compress "$target" "$platform" "$compression
+  compile_and_compress "$target" "$platform" "$compression"
   #&
 done << EOF
 $platforms
