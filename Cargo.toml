@@ -1,6 +1,6 @@
 [package]
 name = "in"
-version = "1.7.4"
+version = "1.7.5"
 authors = ["Alexander F. Rødseth <xyproto@archlinux.org>"]
 edition = "2024"
 
